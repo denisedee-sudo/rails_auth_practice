@@ -1,10 +1,13 @@
 require 'spec_helper'
 require 'rails_helper'
 
-describe SessionsController, :type => :routing do
-  context "Route test" do
-    it "routes to #sessions" do
-      get("/login").should route_to("sessions#new")
+describe SessionsController, :type => :controller do
+  let(:controller) { SessionsController.new }
+
+  context "user create action" do
+    it "should have a create action" do
+      expect(controller).to respond_to(:create), "Did you implement the create action?"
     end
+
   end
 end
