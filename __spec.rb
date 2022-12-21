@@ -1,27 +1,21 @@
-require 'spec_helper'
 require 'rails_helper'
+require 'spec_helper'
 
-describe ApplicationController, :type => :controller do
-   controller do
-    def index
-      current_user
-      render nothing: true
-    end
-  end
+describe 'layouts/application.html.erb', :type => :view do
 
-  before(:each) do
-    User.delete_all
-  end
+  context "Check if user signed in" do
+    it "renders the user name" do
 
-  context "current_user action" do
-    context "user create action" do
-      it "current_user" do
-      u = User.create(email: "test", password: "test", password_confirmation: "test")
-      session[:user_id] = u.id
-
-      get :index
-      expect(assigns(:current_user).id).to be(u.id)
+      controller.singleton_class.class_eval do
+        def current_user
+          User.new(:first_name => "fakeuser", :last_name => "fake", :email => "testuser@fake.com", :password => "password")
+        end
+        helper_method :current_user
       end
+
+      render
+      expect(rendered).to include("testuser@fake.com"), "Did you output the user's email."
+      expect(rendered).not_to include("Login"), "You should not output login if user is signed in."
     end
   end
 end
