@@ -1,20 +1,27 @@
 require 'spec_helper'
 require 'rails_helper'
 
-describe SessionsController, :type => :controller do
-  let(:controller) { SessionsController.new }
-
-  context "session destroy action" do
-    it "should have a destroy action" do
-      expect(controller).to respond_to(:destroy), "Did you implement the destroy action?"
+describe ApplicationController, :type => :controller do
+   controller do
+    def index
+      current_user
+      render nothing: true
     end
+  end
 
-    it "should remove user id from session" do
-      session[:user_id] = 1
+  before(:each) do
+    User.delete_all
+  end
 
-      response =  post :destroy
-      expect(session[:user_id]).to be(nil)
-      expect(response).to redirect_to('/')
+  context "current_user action" do
+    context "user create action" do
+      it "current_user" do
+      u = User.create(email: "test", password: "test", password_confirmation: "test")
+      session[:user_id] = u.id
+
+      get :index
+      expect(assigns(:current_user).id).to be(u.id)
+      end
     end
   end
 end
